@@ -754,6 +754,15 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
     ring.style.opacity = '1';
   });
 
+  document.addEventListener('mousedown', () => {
+    ring.classList.add('cursor-clicked');
+    sounds.click();
+  });
+
+  document.addEventListener('mouseup', () => {
+    ring.classList.remove('cursor-clicked');
+  });
+
   // --- Hover detection on interactive elements ---
   const interactiveSelector = 'a, button, input, select, textarea, .upgrade-btn, .hotspot, .specs-card, .cyber-card, .btn-portal, .btn-primary, .btn-secondary, .btn-submit, .install-system-btn, .hud-slider, .audio-toggle-btn, [role="button"], label[for]';
 
@@ -779,12 +788,23 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
   });
 
   // --- Animation loop (lerp ring + draw trail) ---
-  const LERP_SPEED = 0.15;
+  const LERP_SPEED = 0.2;
 
   function cursorLoop() {
     // Lerp ring towards cursor
     ringX += (cursorX - ringX) * LERP_SPEED;
     ringY += (cursorY - ringY) * LERP_SPEED;
+    
+    // Leash constraint: keep the outer ring in contact/range of the center dot
+    const dx = ringX - cursorX;
+    const dy = ringY - cursorY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const maxLeash = isHovering ? 20 : 12; // tighter limit when normal, slightly wider when hover-expanded
+    if (dist > maxLeash) {
+      const angle = Math.atan2(dy, dx);
+      ringX = cursorX + Math.cos(angle) * maxLeash;
+      ringY = cursorY + Math.sin(angle) * maxLeash;
+    }
     
     // Position outer ring via translate3d
     ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
