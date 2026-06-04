@@ -662,3 +662,161 @@ sliders.shield.addEventListener('change', (e) => {
 // Initialize default highlighted svg parts
 highlightSvgPart(nodeData[activeNode].partId);
 appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
+
+
+// ============================================================
+//   CYBERNETIC CUSTOM CURSOR SYSTEM
+//   Purple-blue targeting reticle with particle trail
+// ============================================================
+(function initCyberCursor() {
+  // Bail on touch devices
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (isTouchDevice) return;
+
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  const trailCanvas = document.getElementById('cursor-trail-canvas');
+  if (!dot || !ring || !trailCanvas) return;
+
+  const tCtx = trailCanvas.getContext('2d');
+
+  // --- State ---
+  let cursorX = -100, cursorY = -100;       // true mouse position
+  let ringX = -100, ringY = -100;           // delayed ring position
+  let isHovering = false;
+  let isVisible = false;
+
+  // --- Resize trail canvas ---
+  function resizeTrailCanvas() {
+    trailCanvas.width = window.innerWidth;
+    trailCanvas.height = window.innerHeight;
+  }
+  resizeTrailCanvas();
+  window.addEventListener('resize', resizeTrailCanvas);
+
+  // --- Trail particles (object pool with physics) ---
+  const MAX_TRAIL = 50;
+  const trailPool = [];
+  for (let i = 0; i < MAX_TRAIL; i++) {
+    trailPool.push({ x: 0, y: 0, vx: 0, vy: 0, alpha: 0, size: 0, color: '', active: false });
+  }
+  let trailIdx = 0;
+  let lastSpawnX = 0, lastSpawnY = 0;
+
+  function spawnTrailParticle(x, y) {
+    const p = trailPool[trailIdx];
+    p.x = x;
+    p.y = y;
+    // Add subtle drift velocity
+    p.vx = (Math.random() - 0.5) * 1.5;
+    p.vy = (Math.random() - 0.5) * 1.5;
+    p.alpha = 0.8 + Math.random() * 0.2;
+    p.size = 2.0 + Math.random() * 2;
+    // Alternate purple (#8B5CF6) and blue (#3B82F6) colors
+    p.color = Math.random() > 0.5 ? '139,92,246' : '59,130,246';
+    p.active = true;
+    trailIdx = (trailIdx + 1) % MAX_TRAIL;
+  }
+
+  // --- Mouse tracking ---
+  document.addEventListener('mousemove', (e) => {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+
+    if (!isVisible) {
+      isVisible = true;
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
+    }
+
+    // Place dot instantly via hardware-accelerated transform
+    dot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+
+    // Spawn trail particles if moved enough
+    const dx = cursorX - lastSpawnX;
+    const dy = cursorY - lastSpawnY;
+    if (dx * dx + dy * dy > 36) {  // ~6px distance threshold
+      spawnTrailParticle(cursorX, cursorY);
+      lastSpawnX = cursorX;
+      lastSpawnY = cursorY;
+    }
+  });
+
+  document.addEventListener('mouseleave', () => {
+    isVisible = false;
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+  });
+
+  document.addEventListener('mouseenter', () => {
+    isVisible = true;
+    dot.style.opacity = '1';
+    ring.style.opacity = '1';
+  });
+
+  // --- Hover detection on interactive elements ---
+  const interactiveSelector = 'a, button, input, select, textarea, .upgrade-btn, .hotspot, .specs-card, .cyber-card, .btn-portal, .btn-primary, .btn-secondary, .btn-submit, .install-system-btn, .hud-slider, .audio-toggle-btn, [role="button"], label[for]';
+
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(interactiveSelector)) {
+      if (!isHovering) {
+        isHovering = true;
+        ring.classList.add('cursor-hover');
+        dot.classList.add('cursor-hover');
+      }
+    }
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(interactiveSelector)) {
+      // Check if we're still inside an interactive element
+      if (!e.relatedTarget || !e.relatedTarget.closest(interactiveSelector)) {
+        isHovering = false;
+        ring.classList.remove('cursor-hover');
+        dot.classList.remove('cursor-hover');
+      }
+    }
+  });
+
+  // --- Animation loop (lerp ring + draw trail) ---
+  const LERP_SPEED = 0.15;
+
+  function cursorLoop() {
+    // Lerp ring towards cursor
+    ringX += (cursorX - ringX) * LERP_SPEED;
+    ringY += (cursorY - ringY) * LERP_SPEED;
+    
+    // Position outer ring via translate3d
+    ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+
+    // Draw & fade trail particles
+    tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+
+    for (let i = 0; i < MAX_TRAIL; i++) {
+      const p = trailPool[i];
+      if (!p.active) continue;
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.025;
+      p.size *= 0.94;
+
+      if (p.alpha <= 0 || p.size < 0.2) {
+        p.active = false;
+        continue;
+      }
+
+      tCtx.beginPath();
+      tCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      tCtx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      tCtx.fill();
+    }
+
+    requestAnimationFrame(cursorLoop);
+  }
+
+  // Start hidden, show on first move
+  dot.style.opacity = '0';
+  ring.style.opacity = '0';
+  cursorLoop();
+})();

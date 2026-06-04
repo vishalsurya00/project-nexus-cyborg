@@ -235,6 +235,7 @@ header {
   font-weight: 900;
   background: linear-gradient(90deg, var(--cyber-cyan), var(--bio-magenta));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: flex;
   align-items: center;
@@ -1094,6 +1095,7 @@ nav a:hover::before {
 
 .hud-slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 4px;
   background: var(--bg-darker);
@@ -1411,5 +1413,162 @@ footer {
   .footer-content {
     flex-direction: column;
     gap: 20px;
+  }
+}
+
+/* ============================================================
+   CYBERNETIC CUSTOM CURSOR SYSTEM
+   Purple (#8B5CF6) → Blue (#3B82F6) targeting reticle
+============================================================ */
+
+/* Hide default cursor on desktop */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+/* Particle trail canvas — fullscreen, behind cursor elements */
+#cursor-trail-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Base cursor containers - positioned via translate3d in JS */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10002;
+  pointer-events: none;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cursor-ring {
+  z-index: 10001;
+}
+
+/* Center dot visual */
+.cursor-dot-visual {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #c4b5fd 0%, #8B5CF6 40%, #3B82F6 100%);
+  box-shadow:
+    0 0 6px 2px rgba(139, 92, 246, 0.8),
+    0 0 14px 4px rgba(59, 130, 246, 0.5),
+    0 0 28px 8px rgba(139, 92, 246, 0.25);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-dot.cursor-hover .cursor-dot-visual {
+  transform: translate(-50%, -50%) scale(1.4);
+  box-shadow:
+    0 0 8px 3px rgba(139, 92, 246, 1),
+    0 0 20px 6px rgba(59, 130, 246, 0.7),
+    0 0 40px 12px rgba(139, 92, 246, 0.35);
+}
+
+/* Outer ring scale container (for hover scale and glow transition) */
+.cursor-ring-scale {
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-ring.cursor-hover .cursor-ring-scale {
+  transform: scale(1.6);
+}
+
+/* Outer ring rotate container (for continuous spinning) */
+.cursor-ring-rotate {
+  animation: cursor-spin 15s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes cursor-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Outer ring visual */
+.cursor-ring-visual {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(139, 92, 246, 0.55);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+  box-shadow:
+    0 0 10px 2px rgba(139, 92, 246, 0.2),
+    0 0 20px 4px rgba(59, 130, 246, 0.1),
+    inset 0 0 8px rgba(139, 92, 246, 0.08);
+  position: relative;
+  transform: translate(-50%, -50%);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* Reticle crosshair / ticks on the ring */
+.cursor-ring-visual::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  right: -5px;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, #8B5CF6 0%, transparent 15%, transparent 85%, #8B5CF6 100%);
+  transition: background 0.3s ease;
+}
+
+.cursor-ring-visual::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  bottom: -5px;
+  width: 1.5px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #8B5CF6 0%, transparent 15%, transparent 85%, #8B5CF6 100%);
+  transition: background 0.3s ease;
+}
+
+/* Intensify glow on hover */
+.cursor-ring.cursor-hover .cursor-ring-visual {
+  border-color: rgba(139, 92, 246, 0.85);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  box-shadow:
+    0 0 15px 4px rgba(139, 92, 246, 0.4),
+    0 0 30px 8px rgba(59, 130, 246, 0.2),
+    inset 0 0 12px rgba(139, 92, 246, 0.15);
+}
+
+.cursor-ring.cursor-hover .cursor-ring-visual::before,
+.cursor-ring.cursor-hover .cursor-ring-visual::after {
+  background: linear-gradient(90deg, #3B82F6 0%, transparent 15%, transparent 85%, #3B82F6 100%);
+}
+
+.cursor-ring.cursor-hover .cursor-ring-visual::after {
+  background: linear-gradient(180deg, #3B82F6 0%, transparent 15%, transparent 85%, #3B82F6 100%);
+}
+
+/* Hide custom cursor on touch / mobile devices */
+@media (pointer: coarse), (hover: none) {
+  .cursor-dot,
+  .cursor-ring,
+  #cursor-trail-canvas {
+    display: none !important;
+  }
+  *, *::before, *::after {
+    cursor: auto !important;
   }
 }
