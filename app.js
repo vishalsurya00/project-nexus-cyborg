@@ -675,7 +675,7 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
 
   const dot = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
-  const metadataEl = document.getElementById('cursor-metadata');
+
   const trailCanvas = document.getElementById('cursor-trail-canvas');
   if (!dot || !ring || !trailCanvas) return;
 
@@ -781,7 +781,6 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
       if (!isHovering) {
         isHovering = true;
         ring.classList.add('cursor-hover');
-        dot.classList.add('cursor-hover');
       }
     }
   });
@@ -792,7 +791,6 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
       if (!e.relatedTarget || !e.relatedTarget.closest(interactiveSelector)) {
         isHovering = false;
         ring.classList.remove('cursor-hover');
-        dot.classList.remove('cursor-hover');
       }
     }
   });
@@ -820,16 +818,7 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
       // Position outer ring via translate3d
       ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
 
-      // Update cybernetic metadata coordinate display
-      if (metadataEl) {
-        if (isHovering) {
-          metadataEl.textContent = 'LINK_EST';
-        } else {
-          const xPad = Math.floor(cursorX).toString().padStart(4, '0');
-          const yPad = Math.floor(cursorY).toString().padStart(4, '0');
-          metadataEl.textContent = `X:${xPad} Y:${yPad}`;
-        }
-      }
+
     }
 
     // Draw & fade trail particles on canvas

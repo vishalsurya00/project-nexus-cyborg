@@ -1540,27 +1540,6 @@ footer {
 }
 }
 
-/* Cybernetic cursor metadata display next to cursor */
-.cursor-metadata {
-  position: absolute;
-  left: 26px;
-  top: -12px;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  color: #3B82F6;
-  text-shadow: 0 0 4px rgba(59, 130, 246, 0.6);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0.8;
-  letter-spacing: 1px;
-  transition: color 0.3s ease, opacity 0.3s ease;
-}
-
-.cursor-ring.cursor-hover .cursor-metadata {
-  color: #8B5CF6;
-  text-shadow: 0 0 4px rgba(139, 92, 246, 0.6);
-  opacity: 1;
-}
 
 /* Hide custom cursor on touch / mobile devices */
 @media (pointer: coarse), (hover: none) {
