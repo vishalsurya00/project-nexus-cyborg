@@ -1418,7 +1418,7 @@ footer {
 
 /* ============================================================
    CYBERNETIC CUSTOM CURSOR SYSTEM
-   Purple (#8B5CF6) → Blue (#3B82F6) Neon Gradient Glow
+   Purple (#8B5CF6) → Blue (#3B82F6) targeting reticle
 ============================================================ */
 
 /* Hide default cursor on desktop */
@@ -1439,93 +1439,126 @@ footer {
   pointer-events: none;
 }
 
-/* Center targeting dot: bright white core, purple-blue gradient glow */
-.cursor-dot {
+/* Base cursor containers - positioned via translate3d in JS */
+.cursor-dot, .cursor-ring {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 10002;
+  pointer-events: none;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cursor-ring {
+  z-index: 10001;
+}
+
+/* Center dot visual */
+.cursor-dot-visual {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ffffff; /* Bright core */
+  background: radial-gradient(circle, #c4b5fd 0%, #8B5CF6 40%, #3B82F6 100%);
   box-shadow:
-    0 0 8px 2px #8B5CF6,        /* Purple glow */
-    0 0 16px 4px #3B82F6,       /* Blue glow */
-    0 0 24px 6px rgba(139, 92, 246, 0.4);
-  z-index: 10002;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  will-change: transform;
-  transition: width 0.2s cubic-bezier(0.25, 1, 0.5, 1),
-              height 0.2s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.2s ease;
+    0 0 6px 2px rgba(139, 92, 246, 0.8),
+    0 0 14px 4px rgba(59, 130, 246, 0.5),
+    0 0 28px 8px rgba(139, 92, 246, 0.25);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Outer tracking ring — follows with smooth delay, purple-to-blue neon border */
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
+.cursor-dot.cursor-hover .cursor-dot-visual {
+  transform: translate(-50%, -50%) scale(1.4);
+  box-shadow:
+    0 0 8px 3px rgba(139, 92, 246, 1),
+    0 0 20px 6px rgba(59, 130, 246, 0.7),
+    0 0 40px 12px rgba(139, 92, 246, 0.35);
+}
+
+/* Outer ring scale container (for hover scale and glow transition) */
+.cursor-ring-scale {
+  transform: scale(1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-ring.cursor-hover .cursor-ring-scale {
+  transform: scale(1.6);
+}
+
+/* Outer ring rotate container (for continuous spinning) */
+.cursor-ring-rotate {
+  animation: cursor-spin 15s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes cursor-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Outer ring visual */
+.cursor-ring-visual {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  border: 1.5px solid rgba(139, 92, 246, 0.55);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
   box-shadow:
-    0 0 0 1.5px rgba(139, 92, 246, 0.6),    /* Purple ring */
-    0 0 10px 2px rgba(139, 92, 246, 0.35),   /* Outer purple glow */
-    0 0 20px 4px rgba(59, 130, 246, 0.25),   /* Outer blue glow */
-    inset 0 0 8px rgba(59, 130, 246, 0.2);   /* Inner blue glow */
-  z-index: 10001;
-  pointer-events: none;
+    0 0 10px 2px rgba(139, 92, 246, 0.2),
+    0 0 20px 4px rgba(59, 130, 246, 0.1),
+    inset 0 0 8px rgba(139, 92, 246, 0.08);
+  position: relative;
   transform: translate(-50%, -50%);
-  will-change: transform, width, height;
-  transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-              height 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
-/* We can add a second border inside using ::before to get a double-colored neon gradient ring */
-.cursor-ring::before {
+/* Reticle crosshair / ticks on the ring */
+.cursor-ring-visual::before {
   content: '';
   position: absolute;
-  top: 1px;
-  left: 1px;
-  right: 1px;
-  bottom: 1px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1.5px rgba(59, 130, 246, 0.5); /* Blue inner ring */
-  opacity: 0.8;
-  pointer-events: none;
-  transition: top 0.35s, left 0.35s, right 0.35s, bottom 0.35s, opacity 0.35s;
+  top: 50%;
+  left: -5px;
+  right: -5px;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, #8B5CF6 0%, transparent 15%, transparent 85%, #8B5CF6 100%);
+  transition: background 0.3s ease;
 }
 
-/* Hover state — outer ring expands by 1.5x (36px * 1.5 = 54px) with intensified glow */
-.cursor-ring.cursor-hover {
-  width: 54px;
-  height: 54px;
+.cursor-ring-visual::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  bottom: -5px;
+  width: 1.5px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #8B5CF6 0%, transparent 15%, transparent 85%, #8B5CF6 100%);
+  transition: background 0.3s ease;
+}
+
+/* Intensify glow on hover */
+.cursor-ring.cursor-hover .cursor-ring-visual {
+  border-color: rgba(139, 92, 246, 0.85);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
   box-shadow:
-    0 0 0 2px rgba(139, 92, 246, 0.9),       /* Stronger purple ring */
-    0 0 20px 6px rgba(139, 92, 246, 0.7),     /* Much stronger purple glow */
-    0 0 35px 12px rgba(59, 130, 246, 0.55),   /* Much stronger blue glow */
-    inset 0 0 16px rgba(59, 130, 246, 0.4);
+    0 0 15px 4px rgba(139, 92, 246, 0.4),
+    0 0 30px 8px rgba(59, 130, 246, 0.2),
+    inset 0 0 12px rgba(139, 92, 246, 0.15);
 }
 
-.cursor-ring.cursor-hover::before {
-  top: 3px;  /* Moves inner blue ring slightly inward on hover for a tactile lens effect */
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8);
-  opacity: 1;
+.cursor-ring.cursor-hover .cursor-ring-visual::before,
+.cursor-ring.cursor-hover .cursor-ring-visual::after {
+  background: linear-gradient(90deg, #3B82F6 0%, transparent 15%, transparent 85%, #3B82F6 100%);
 }
 
-/* Hover state for center dot — increases size slightly and intensifies glow */
-.cursor-dot.cursor-hover {
-  width: 10px;
-  height: 10px;
-  box-shadow:
-    0 0 12px 3px #8B5CF6,
-    0 0 24px 6px #3B82F6,
-    0 0 36px 10px rgba(139, 92, 246, 0.6);
+.cursor-ring.cursor-hover .cursor-ring-visual::after {
+  background: linear-gradient(180deg, #3B82F6 0%, transparent 15%, transparent 85%, #3B82F6 100%);
 }
 
 /* Hide custom cursor on touch / mobile devices */
