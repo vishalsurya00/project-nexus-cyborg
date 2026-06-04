@@ -801,9 +801,17 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
         continue;
       }
 
+      // Draw glowing particle: outer soft halo + inner bright core
+      // 1. Outer soft neon halo
+      tCtx.beginPath();
+      tCtx.arc(p.x, p.y, p.size * 2.2, 0, Math.PI * 2);
+      tCtx.fillStyle = `rgba(${p.color}, ${p.alpha * 0.3})`;
+      tCtx.fill();
+
+      // 2. Inner bright core (tinted white depending on purple/blue color)
       tCtx.beginPath();
       tCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      tCtx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      tCtx.fillStyle = `rgba(${p.color === '139,92,246' ? '224,204,255' : '204,229,255'}, ${p.alpha})`;
       tCtx.fill();
     }
 
