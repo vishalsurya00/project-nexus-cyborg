@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROJECT NEXUS | Cybernetic Enhancements & Bio-Digital Core</title>
+  <meta name="description" content="Configure your cybernetic enhancements. Access real-time diagnostics, modular augmentations, and quantum neural interfaces. Build your cyborg core today.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Neural Link Particle Grid background -->
+  <canvas id="neural-canvas"></canvas>
+
+  <!-- Holographic HUD Header -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon"></div>
+      <div class="logo-text">NEXUS<span>V3.04</span></div>
+    </div>
+    
+    <nav>
+      <ul>
+        <li><a href="#hero" id="nav-home">Home</a></li>
+        <li><a href="#workbench" id="nav-workbench">Workbench</a></li>
+        <li><a href="#hud" id="nav-hud">System HUD</a></li>
+        <li><a href="#specs" id="nav-specs">Specifications</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="audio-toggle-btn" id="audio-toggle" title="Toggle UI Audio feedback">
+        <span class="wave-icon">SOUNDS: OFF</span>
+        <div class="sound-wave">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+      <button class="btn-portal" id="header-portal-btn">Access Portal</button>
+    </div>
+  </header>
+
+  <!-- Hero Landing Section -->
+  <section class="hero" id="hero">
+    <div class="hero-tag">HUMANITY RE-ENGINEERED</div>
+    <h1 class="glitch-title" data-text="HUMAN.SYS">HUMAN.SYS</h1>
+    <p class="hero-subtitle">
+      Welcome to the next stage of evolutionary biology. **Project NEXUS** offers modular cybernetic integrations to bypass human biological latency. Augment your cognitive cores and activate biomechanical nodes today.
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary" id="hero-btn-primary" onclick="document.getElementById('workbench').scrollIntoView({behavior: 'smooth'})">Launch Workbench</button>
+      <button class="btn-secondary" id="hero-btn-secondary" onclick="document.getElementById('hud').scrollIntoView({behavior: 'smooth'})">System Diagnostics</button>
+    </div>
+
+    <div class="telemetry-indicator">
+      <span>HUD SCROLL TELEMETRY</span>
+      <div class="mouse-scroll"></div>
+    </div>
+  </section>
+
+  <!-- Augmentation Workbench Section -->
+  <section class="workbench" id="workbench">
+    <div class="section-title-wrap">
+      <div class="section-tag">COGNITIVE & MECHANICAL BENCH</div>
+      <h2 class="section-title glow-cyan">Augmentation Workbench</h2>
+    </div>
+
+    <div class="workbench-container">
+      
+      <!-- Upgrade selector cards list -->
+      <div class="upgrade-list" id="upgrade-list-container">
+        
+        <button class="upgrade-btn cyber-card active" data-node="brain" id="upgrade-btn-brain">
+          <div class="node-icon">🧠</div>
+          <div class="node-info">
+            <h4>Neural Link Core</h4>
+            <p>Quantum synapse transmitter</p>
+          </div>
+        </button>
+
+        <button class="upgrade-btn cyber-card" data-node="eye" id="upgrade-btn-eye">
+          <div class="node-icon">👁️</div>
+          <div class="node-info">
+            <h4>Tactical HUD Eye</h4>
+            <p>Thermal spectral retinal scanner</p>
+          </div>
+        </button>
+
+        <button class="upgrade-btn cyber-card" data-node="core" id="upgrade-btn-core">
+          <div class="node-icon">⚡</div>
+          <div class="node-info">
+            <h4>Quantum Bio-Battery</h4>
+            <p>Subdermal fusion cell pack</p>
+          </div>
+        </button>
+
+        <button class="upgrade-btn cyber-card" data-node="arm" id="upgrade-btn-arm">
+          <div class="node-icon">🦾</div>
+          <div class="node-info">
+            <h4>Nano-Actuator Arm</h4>
+            <p>Micro-filament muscle actuator</p>
+          </div>
+        </button>
+
+        <button class="upgrade-btn cyber-card" data-node="legs" id="upgrade-btn-legs">
+          <div class="node-icon">🦿</div>
+          <div class="node-info">
+            <h4>Subdermal Armor Plates</h4>
+            <p>Carbon-nanotube kinetic shield</p>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Hologram Model Center Previewer -->
+      <div class="previewer-display cyber-card clip-corner" id="silhouette-display-box">
+        <div class="hologram-grid-bg"></div>
+        <div class="scanner-beam"></div>
+        
+        <div class="model-wrapper">
+          <!-- Inline Hologram SVG Silhouette -->
+          <svg class="hologram-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <!-- Grid background lines -->
+              <line class="model-grid" x1="10" y1="0" x2="10" y2="120" />
+              <line class="model-grid" x1="30" y1="0" x2="30" y2="120" />
+              <line class="model-grid" x1="50" y1="0" x2="50" y2="120" />
+              <line class="model-grid" x1="70" y1="0" x2="70" y2="120" />
+              <line class="model-grid" x1="90" y1="0" x2="90" y2="120" />
+              <line class="model-grid" x1="0" y1="20" x2="100" y2="20" />
+              <line class="model-grid" x1="0" y1="60" x2="100" y2="60" />
+              <line class="model-grid" x1="0" y1="100" x2="100" y2="100" />
+              
+              <!-- Human Cyborg Outline Paths -->
+              <!-- Head -->
+              <path class="model-body" d="M 50 15 C 47 15, 46 17, 46 20 C 46 23, 48 25, 50 25 C 52 25, 54 23, 54 20 C 54 17, 53 15, 50 15 Z" />
+              <!-- Neck -->
+              <path class="model-body" d="M 48 25 L 48 29 L 52 29 L 52 25 Z" />
+              <!-- Shoulders -->
+              <path class="model-body" d="M 36 33 L 48 29 L 52 29 L 64 33 Z" />
+              <!-- Chest & Spine -->
+              <path class="model-body" d="M 36 33 L 38 60 L 62 60 L 64 33 Z" />
+              <path class="model-accent" d="M 50 29 L 50 60" />
+              <!-- Left Arm -->
+              <path class="model-body" d="M 36 33 L 32 50 L 30 68" />
+              <circle class="model-body" cx="32" cy="50" r="2.5" />
+              <!-- Right Arm (Enhanced mechanical silhouette) -->
+              <path class="model-body" id="svg-part-arm" d="M 64 33 L 68 50 L 70 68" />
+              <circle class="model-body" cx="68" cy="50" r="2.5" />
+              <!-- Pelvis -->
+              <path class="model-body" d="M 38 60 L 42 75 L 58 75 L 62 60 Z" />
+              <!-- Left Leg -->
+              <path class="model-body" d="M 42 75 L 40 95 L 38 115" />
+              <circle class="model-body" cx="40" cy="95" r="2.5" />
+              <!-- Right Leg -->
+              <path class="model-body" id="svg-part-legs" d="M 58 75 L 60 95 L 62 115" />
+              <circle class="model-body" cx="60" cy="95" r="2.5" />
+              
+              <!-- Core battery indicator circles -->
+              <circle class="model-accent" cx="50" cy="45" r="5" />
+              <circle class="model-body" id="svg-part-core" cx="50" cy="45" r="2" />
+              
+              <!-- Brain neural circuits -->
+              <path class="model-accent" id="svg-part-brain" d="M 47 18 Q 50 13 53 18" />
+              <circle class="model-accent" cx="50" cy="18" r="1.5" />
+              
+              <!-- Scanning ocular indicator -->
+              <circle class="model-accent" id="svg-part-eye" cx="51.5" cy="18.5" r="0.8" />
+            </g>
+          </svg>
+
+          <!-- Interactive Hotspot Overlays -->
+          <div class="hotspot hotspot-brain active" data-node="brain" id="hotspot-brain" title="Neural Link System">
+            <div class="ring"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="hotspot hotspot-eye" data-node="eye" id="hotspot-eye" title="Retinal Interface">
+            <div class="ring"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="hotspot hotspot-core" data-node="core" id="hotspot-core" title="Quantum Core">
+            <div class="ring"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="hotspot hotspot-arm" data-node="arm" id="hotspot-arm" title="Mechanical Limbs">
+            <div class="ring"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="hotspot hotspot-legs" data-node="legs" id="hotspot-legs" title="Subdermal Frame">
+            <div class="ring"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail display stats & upgrade trigger panel -->
+      <div class="upgrade-details">
+        <div class="detail-panel cyber-card" id="upgrade-details-panel">
+          <div class="detail-header">
+            <span class="detail-class" id="upgrade-serial">CLASS: SYNAPSE-NET</span>
+            <h3 class="detail-title glow-cyan" id="upgrade-title">Neural Link Core</h3>
+          </div>
+          
+          <p class="detail-description" id="upgrade-desc">
+            Establishes a quantum synapse bridge between raw brain tissue and mechanical networks, reducing command processing latency to 0.1ms.
+          </p>
+
+          <div class="telemetry-stats">
+            <div class="stat-row">
+              <div class="stat-label">
+                <span>Computing Speed (FLOPs)</span>
+                <span id="stat-val-speed">85%</span>
+              </div>
+              <div class="stat-progress-bar">
+                <div class="stat-fill" id="stat-bar-speed" style="width: 85%;"></div>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-label">
+                <span>Latency Threshold</span>
+                <span id="stat-val-latency">92%</span>
+              </div>
+              <div class="stat-progress-bar">
+                <div class="stat-fill" id="stat-bar-latency" style="width: 92%;"></div>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-label">
+                <span>Energy Load</span>
+                <span id="stat-val-energy">30%</span>
+              </div>
+              <div class="stat-progress-bar">
+                <div class="stat-fill" id="stat-bar-energy" style="width: 30%;"></div>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat-label">
+                <span>Kinetic Density</span>
+                <span id="stat-val-density">15%</span>
+              </div>
+              <div class="stat-progress-bar">
+                <div class="stat-fill" id="stat-bar-density" style="width: 15%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="install-system-btn" id="install-btn">
+            <span id="install-btn-text">INITIALIZE UPGRADE</span>
+            <div class="btn-glow"></div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Systems Diagnostics Section -->
+  <section class="hud-section" id="hud">
+    <div class="section-title-wrap">
+      <div class="section-tag">REAL-TIME CORE METRICS</div>
+      <h2 class="section-title glow-magenta">Diagnostics HUD</h2>
+    </div>
+
+    <div class="hud-grid">
+      
+      <!-- Terminal Console Logger & Sliders -->
+      <div class="console-panel cyber-card">
+        <div class="console-header">
+          <div class="console-title-wrap">
+            <div class="console-status-dot"></div>
+            <h3>NEXUS SYSTEM LOGS</h3>
+          </div>
+          <span class="console-meta" id="console-host">HOST: LOC-127.0.0.1</span>
+        </div>
+
+        <div class="console-logs" id="terminal-feed">
+          <div class="console-line"><span class="timestamp">[11:02:11]</span> <span class="cyan">NEXUS Core Loader V3.04 Initializing...</span></div>
+          <div class="console-line"><span class="timestamp">[11:02:12]</span> Checking sub-dermal integrity nodes... <span class="cyan">OK</span></div>
+          <div class="console-line"><span class="timestamp">[11:02:13]</span> Synapse latency benchmark: 0.12ms... <span class="cyan">STABLE</span></div>
+          <div class="console-line"><span class="timestamp">[11:02:14]</span> WARNING: Core neural load threshold at 42%. Overclock available.</div>
+        </div>
+
+        <div class="control-rack">
+          <div class="rack-card cyber-card">
+            <h5>SYNC FREQ</h5>
+            <div class="rack-knob">
+              <input type="range" class="hud-slider" id="slider-sync" min="20" max="250" value="120">
+              <span class="rack-value" id="val-sync">120 Hz</span>
+            </div>
+          </div>
+
+          <div class="rack-card cyber-card">
+            <h5>OVERCLOCK</h5>
+            <div class="rack-knob">
+              <input type="range" class="hud-slider" id="slider-overclock" min="0" max="100" value="45">
+              <span class="rack-value" id="val-overclock">45%</span>
+            </div>
+          </div>
+
+          <div class="rack-card cyber-card">
+            <h5>SHIELD MESH</h5>
+            <div class="rack-knob">
+              <input type="range" class="hud-slider" id="slider-shield" min="10" max="100" value="80">
+              <span class="rack-value" id="val-shield">80%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Radial Telemetry Scanner Sweep -->
+      <div class="telemetry-panel cyber-card">
+        <div class="console-header">
+          <h3>RADIAL RADAR TELEMETRY</h3>
+        </div>
+        
+        <div class="radar-wrapper">
+          <canvas id="radar-canvas" width="240" height="240"></canvas>
+        </div>
+
+        <div class="radar-status">
+          <div class="radar-stat-item">
+            <label>BIO-SYNCHRONIZATION</label>
+            <span id="telemetry-bio-sync" class="glow-green">98.7% SECURE</span>
+          </div>
+          <div class="radar-stat-item">
+            <label>NANO-MESH TEMPERATURE</label>
+            <span id="telemetry-temp">36.8°C</span>
+          </div>
+          <div class="radar-stat-item">
+            <label>CELLULAR INFLOW POWER</label>
+            <span id="telemetry-power" class="glow-cyan">4.2 kW/s</span>
+          </div>
+          <div class="radar-stat-item">
+            <label>SYSTEM REACTION CODE</label>
+            <span id="telemetry-code">SYS_ACTIVE_99E</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Technical Specifications Card Deck -->
+  <section class="specs-section" id="specs">
+    <div class="section-title-wrap">
+      <div class="section-tag">HARDWARE ARCHITECTURE</div>
+      <h2 class="section-title glow-green">System Specifications</h2>
+    </div>
+
+    <div class="specs-grid">
+      
+      <div class="specs-card cyber-card clip-corner">
+        <div class="card-icon">🧠</div>
+        <h3>Neural Synaptic Matrix</h3>
+        <p>A bio-synthetic mesh engineered to map cortical columns directly into standard quantum compute frameworks.</p>
+        <ul class="specs-features">
+          <li><span>Transmission speed</span> <span>10 GB/s</span></li>
+          <li><span>Neural bandwidth</span> <span>10,000 Nodes</span></li>
+          <li><span>Core redundancy</span> <span>Quad-Channel</span></li>
+        </ul>
+      </div>
+
+      <div class="specs-card cyber-card clip-corner">
+        <div class="card-icon">⚡</div>
+        <h3>Cellular Fusion Reactor</h3>
+        <p>Harnesses micro-scale beta-voltaic energy generators directly in the bloodstream for perpetual operations.</p>
+        <ul class="specs-features">
+          <li><span>Core lifespan</span> <span>80 Years</span></li>
+          <li><span>Emergency Reserve</span> <span>24 Hours</span></li>
+          <li><span>Max energy yield</span> <span>12 kW/h</span></li>
+        </ul>
+      </div>
+
+      <div class="specs-card cyber-card clip-corner">
+        <div class="card-icon">🦾</div>
+        <h3>Nano-Structure Actuator</h3>
+        <p>Fibers constructed from custom synthetic carbon nanotubes that contract instantly on command voltage signals.</p>
+        <ul class="specs-features">
+          <li><span>Tensile Strength</span> <span>4500 MPa</span></li>
+          <li><span>Actuation latency</span> <span>0.05ms</span></li>
+          <li><span>Max torque output</span> <span>750 Nm</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Portal Neural Link Signup Footer -->
+  <section class="portal-section" id="portal">
+    <div class="portal-box cyber-card clip-corner">
+      <h2>Neural Synchronization</h2>
+      <p>Enter your neural address below to join the upcoming synchronization wave. Receive firmware beta release notes.</p>
+      
+      <form class="portal-form" id="signup-form" onsubmit="event.preventDefault(); alert('Neural Link Registered. Preparing synchronizer wave...');">
+        <input type="email" class="portal-input" placeholder="NEURAL-NET@ADDRESS.SYS" required id="portal-email">
+        <button type="submit" class="btn-submit" id="portal-submit-btn">SYNCHRONIZE</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer Stats -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-copy">
+        &copy; 2026 PROJECT NEXUS. ALL RIGHTS RESERVED. SECURE DEPLOYMENT.
+      </div>
+      <div class="footer-status">
+        <div class="system-pulsar"></div>
+        <span>NEXUS CENTRAL BEACON ACTIVE</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
