@@ -665,4 +665,198 @@ appendLog("NEXUS Core Systems online. Sync terminal diagnostics active.");
 
 
 // ============================================================
-// Custom cursor removed — default system cursor in use
+//   CYBERNETIC CUSTOM CURSOR SYSTEM
+//   Purple-blue targeting reticle with particle trail
+// ============================================================
+(function initCyberCursor() {
+  // Only enable custom cursor on devices with a fine pointer (mouse/trackpad)
+  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+
+  const dot = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+
+  const trailCanvas = document.getElementById('cursor-trail-canvas');
+  if (!dot || !ring || !trailCanvas) return;
+
+  const tCtx = trailCanvas.getContext('2d');
+
+  // --- State ---
+  let cursorX = -100, cursorY = -100;       // true mouse position
+  let ringX = -100, ringY = -100;           // delayed ring position
+  let isHovering = false;
+  let isVisible = false;
+  let isFirstMove = true;
+
+  // --- Resize trail canvas ---
+  function resizeTrailCanvas() {
+    trailCanvas.width = window.innerWidth;
+    trailCanvas.height = window.innerHeight;
+  }
+  resizeTrailCanvas();
+  window.addEventListener('resize', resizeTrailCanvas);
+
+  // --- Trail particles (object pool with physics) ---
+  const MAX_TRAIL = 60;
+  const trailPool = [];
+  for (let i = 0; i < MAX_TRAIL; i++) {
+    trailPool.push({ x: 0, y: 0, vx: 0, vy: 0, alpha: 0, size: 0, color: '', active: false });
+  }
+  let trailIdx = 0;
+  let lastSpawnX = 0, lastSpawnY = 0;
+
+  function spawnTrailParticle(x, y) {
+    const p = trailPool[trailIdx];
+    p.x = x;
+    p.y = y;
+    // Add subtle drift velocity
+    p.vx = (Math.random() - 0.5) * 1.2;
+    p.vy = (Math.random() - 0.5) * 1.2;
+    p.alpha = 0.85 + Math.random() * 0.15;
+    p.size = 2.0 + Math.random() * 2.5;
+    // Alternate purple (#8B5CF6 -> rgb 139,92,246) and blue (#3B82F6 -> rgb 59,130,246) colors
+    p.color = Math.random() > 0.5 ? '139,92,246' : '59,130,246';
+    p.active = true;
+    trailIdx = (trailIdx + 1) % MAX_TRAIL;
+  }
+
+  // --- Mouse tracking ---
+  document.addEventListener('mousemove', (e) => {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+
+    if (isFirstMove) {
+      ringX = cursorX;
+      ringY = cursorY;
+      isFirstMove = false;
+    }
+
+    if (!isVisible) {
+      isVisible = true;
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
+    }
+
+    // Place dot instantly via hardware-accelerated transform
+    dot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+
+    // Spawn trail particles if moved enough (8px distance threshold to keep it clean yet fluid)
+    const dx = cursorX - lastSpawnX;
+    const dy = cursorY - lastSpawnY;
+    if (dx * dx + dy * dy > 64) {
+      spawnTrailParticle(cursorX, cursorY);
+      lastSpawnX = cursorX;
+      lastSpawnY = cursorY;
+    }
+  });
+
+  document.addEventListener('mouseleave', () => {
+    isVisible = false;
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+  });
+
+  document.addEventListener('mouseenter', () => {
+    isVisible = true;
+    dot.style.opacity = '1';
+    ring.style.opacity = '1';
+  });
+
+  document.addEventListener('mousedown', () => {
+    ring.classList.add('cursor-clicked');
+    if (sounds.click) {
+      sounds.click();
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    ring.classList.remove('cursor-clicked');
+  });
+
+  // --- Hover detection on interactive elements ---
+  const interactiveSelector = 'a, button, input, select, textarea, .upgrade-btn, .hotspot, .specs-card, .cyber-card, .btn-portal, .btn-primary, .btn-secondary, .btn-submit, .install-system-btn, .hud-slider, .audio-toggle-btn, [role="button"], label[for]';
+
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(interactiveSelector)) {
+      if (!isHovering) {
+        isHovering = true;
+        ring.classList.add('cursor-hover');
+      }
+    }
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(interactiveSelector)) {
+      // Check if we're still inside an interactive element
+      if (!e.relatedTarget || !e.relatedTarget.closest(interactiveSelector)) {
+        isHovering = false;
+        ring.classList.remove('cursor-hover');
+      }
+    }
+  });
+
+  // --- Animation loop (lerp ring + draw trail) ---
+  const LERP_SPEED = 0.18; // Smooth but tight follow for cohesive reticle feel
+
+  function cursorLoop() {
+    if (isVisible) {
+      // Lerp ring towards cursor
+      ringX += (cursorX - ringX) * LERP_SPEED;
+      ringY += (cursorY - ringY) * LERP_SPEED;
+      
+      // Leash constraint: keep the outer ring in contact/range of the center dot
+      const dx = ringX - cursorX;
+      const dy = ringY - cursorY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxLeash = 2; // ring stays concentric with the dot
+      if (dist > maxLeash) {
+        const angle = Math.atan2(dy, dx);
+        ringX = cursorX + Math.cos(angle) * maxLeash;
+        ringY = cursorY + Math.sin(angle) * maxLeash;
+      }
+      
+      // Position outer ring via translate3d
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+
+
+    }
+
+    // Draw & fade trail particles on canvas
+    tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+
+    for (let i = 0; i < MAX_TRAIL; i++) {
+      const p = trailPool[i];
+      if (!p.active) continue;
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.018; // smooth slow fade-out
+      p.size *= 0.95;  // smooth shrinking
+
+      if (p.alpha <= 0 || p.size < 0.2) {
+        p.active = false;
+        continue;
+      }
+
+      tCtx.beginPath();
+      tCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      
+      // Add subtle glow blur around particles for premium aesthetic
+      tCtx.shadowBlur = 6;
+      tCtx.shadowColor = `rgba(${p.color}, 0.5)`;
+      
+      tCtx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      tCtx.fill();
+      
+      // Reset shadow blur to keep canvas drawing fast
+      tCtx.shadowBlur = 0;
+    }
+
+    requestAnimationFrame(cursorLoop);
+  }
+
+  // Start hidden, show on first move
+  dot.style.opacity = '0';
+  ring.style.opacity = '0';
+  cursorLoop();
+})();
